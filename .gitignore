@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Build output
+dist/
+build/
+
+# OS junk
+.DS_Store
+
+# Uploads temp folder
+/tmp/resume-matcher/
