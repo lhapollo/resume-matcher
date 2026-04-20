@@ -1,0 +1,157 @@
+import { useNavigate } from 'react-router-dom';
+import {useState, useRef} from 'react';
+import { analyzeMatch} from '../lib/api';
+
+export default function UploadPage() {
+    const [resume, setResume] = useState(null);
+    const [jobText, setJobText] = useState('');
+    const [dragOver, setDragOver] = useState(false);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const fileInputRef = useRef();
+    const navigate = useNavigate();
+
+    function handleFile(file) {
+        if (!file) return; 
+        const allowed = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (!allowed.includes(file.type)) {
+            setError('Please upload a PDF or DOCX file.');
+            return; 
+        }
+        setError('');
+        setResume(file);
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        setDragOver(false);
+        handleFile(e.dataTransfer.files[0]);
+    }
+
+    async function handleSubmit() {
+        if (!resume) return setError('Please upload your resume.');
+        if (!jobText.trim()) return setError('Please enter the job description.');
+        setError('');
+        setLoading(true);
+
+        try {
+            const res = await analyzeMatch(resume, jobText);
+            navigate('/results', { state: {res}});
+        } catch(err) {
+            setError(err.message);
+            setLoading(false);
+        }
+    }
+
+    return (
+        <div className="min-h-screen bg-white font-google-sans px-6 py-12">
+            <div className="text-center">
+                <h1 className="text-9xl">FitCheck</h1>
+                <p className="text-2xl text-zinc-500 p-4">How fit is your resume for a job posting? Find out below!</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="border border-neutral-800 rounded-xl p-6 flex flex-col gap-4">
+                    <div className="flex items-center gap-2">
+                        <h2>Your Resume</h2>
+                    </div>
+                    <div
+                        onClick={() => fileInputRef.current.click()}
+                        onDragOver={(e) => { e.preventDefault(); setDragOver(true);}}
+                        onDragLeave={() => setDragOver(false)}
+                        onDrop={handleDrop}
+                        className={`border-2 border-dashed rounded-lg p-8 min-h-[160px]
+                                    flex items-center justify-center cursor-pointer
+                                    transition-all duration-200
+                                    ${dragOver
+                                    ? 'border-[#e8ff6e] bg-[#e8ff6e]/5'
+                                    : resume
+                                    ? 'border-[#e8ff6e] bg-[#e8ff6e]/5'
+                                    : 'border-neutral-700 hover:border-neutral-500 hover:bg-white/[0.02]'
+                                    }
+                    `}>
+                        <input 
+                            ref={fileInputRef} 
+                            type="file"
+                            accept=".pdf, .doc, .docx"
+                            className="hidden"
+                            onChange={(e) => handleFile(e.target.files[0])}    
+                        />
+
+                        {resume ? (
+                            <div className="flex items-center gap-3">
+                            <span className="text-[#e8ff6e] text-2xl">◉</span>
+                            <div>
+                                <div className="text-sm font-medium text-white">{resume.name}</div>
+                                <div className="text-xs text-neutral-500 mt-0.5">
+                                {(resume.size / 1024).toFixed(1)} KB — click to change
+                                </div>
+                            </div>
+                            </div>
+                        ) : (
+                            <div className="text-center flex flex-col items-center gap-2">
+                            <span className="text-3xl text-neutral-600">⊕</span>
+                            <div className="text-sm font-medium text-neutral-400">
+                                Drop your resume here
+                            </div>
+                            <div className="text-xs text-neutral-600">PDF or DOCX, up to 10MB</div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <div className="border border-neutral-800 rounded-xl p-6 flex flex-col gap-4">
+                    <div className="flex items-center gap-2">
+                        <h2>Job Description</h2>
+                    </div>
+                    
+                    <textarea
+                        value={jobText}
+                        onChange={(e) => setJobText(e.target.value)}
+                        placeholder="Paste the job posting here. Markdown is supported."
+                        spellCheck={false}
+                        className="
+                            flex-1 min-h-[200px] border border-neutral-800
+                            rounded-lg p-4 text-sm placeholder-neutral-600
+                            font-sans leading-relaxed resize-none outline-none
+                            focus:border-neutral-600 transition-colors duration-200
+                        "
+                    />
+
+                    <div className="text-right font-mono text-[11px] text-neutral-600">
+                        {jobText.length} chars
+                    </div>
+                </div>
+            </div>
+
+            {error && (
+                    <div className="mb-4 bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 text-sm text-red-400">
+                        {error}
+                    </div>
+                    )}
+
+                    <button
+                        onClick={handleSubmit}
+                        disabled={loading}
+                        className="
+                            flex items-center gap-2 bg-[#e8ff6e] text-black font-semibold
+                            text-sm px-8 py-4 rounded-lg cursor-pointer
+                            hover:bg-[#f5ff8a] hover:-translate-y-0.5
+                            disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0
+                            transition-all duration-200
+                        "
+                        >
+                        {loading ? (
+                            <>
+                            <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                            Analyzing match...
+                            </>
+                        ) : (
+                            <>
+                            <span>Analyze Match</span>
+                            <span className="text-lg transition-transform duration-200 group-hover:translate-x-1">→</span>
+                            </>
+                        )}
+                        </button>
+        </div>
+    );
+}
