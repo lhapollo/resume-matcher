@@ -16,24 +16,30 @@ function buildPrompt(resumeText, jobDescription) {
 
     {
         "overallScore": <integer 0-100>,
-        "summary": "<2-3 sentence of an honest assessment>",
+        "summary": "<2-3 sentence honest assessment>",
         "categories": {
-            "score": <integer 0-100>,
-            "matched": [<list of key skills that matched>],
-            "missing": [<list of key skills that were missing>]
+            "skills": {
+                "score": <integer 0-100>,
+                "matched": [<list of key skills that matched>],
+                "missing": [<list of key skills that were missing>]
+            },
+            "experience": {
+                "score": <integer 0-100>,
+                "notes": "<2-3 sentences about the quality and relevance of the candidate's experience>"
+            },
+            "education": {
+                "score": <integer 0-100>,
+                "notes": "<1-2 sentences about the candidate's education fit>"
+            },
+            "keywords": {
+                "score": <integer 0-100>,
+                "matched": [<list of important keywords from the job description found in the resume>],
+                "missing": [<list of important keywords from the job description NOT found in the resume>]
+            }
         },
-        "experience": {
-            "score": <integer 0-100>,
-            "notes": "<2-3 sentences about the quality and relevance of the candidate's experience>"
-        },
-        "keywords": {
-            "score": <integer 0-100>,
-            "matched": [<list of important keywords from the job description that were found in the resume>],
-            "missing": [<list of important keywords from the job description that were NOT found in the resume>]
-        },
-        "strengths": [<list of the candidate's key strengths based on the resume>],
-        "weaknesses": [<list of the candidate's key weaknesses or gaps based on the resume>]
-        "recommendations": [<list of specific recommendations for the candidate to improve their resume or skills to better match the job description>]
+        "strengths": [<list of the candidate's key strengths>],
+        "gaps": [<list of the candidate's key gaps or weaknesses>],
+        "recommendations": [<list of specific recommendations to improve the resume or skills>]
     }`;
 }
 
