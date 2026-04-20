@@ -7,7 +7,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<UploadPage/>} />
-        {/* <Route path="/results" element={<ResultsPage />}/> */}
+        <Route path="/results" element={<ResultsPage />}/>
       </Routes>
     </BrowserRouter>
   );

@@ -36,7 +36,7 @@ export default function UploadPage() {
 
         try {
             const res = await analyzeMatch(resume, jobText);
-            navigate('/results', { state: {res}});
+            navigate('/results', { state: { result: res } });
         } catch(err) {
             setError(err.message);
             setLoading(false);
