@@ -41,7 +41,7 @@ export default function UploadPage() {
 
         try {
             const res = await analyzeMatch(resume, jobText);
-            navigate('/results', { state: { result: res } });
+            navigate('/results', { state: { result: res, resumeText: res.resumeText, jobDescription: res.jobDescription } });
         } catch(err) {
             setError(err.message);
             setLoading(false);
@@ -55,7 +55,7 @@ export default function UploadPage() {
                 <p className="text-2xl text-zinc-500 dark:text-zinc-400 p-6">How fit is your resume for a job? Find out below!</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-6">
                 <div className="border border-neutral-800 dark:border-neutral-700 rounded-xl p-6 flex flex-col gap-4">
                     <div className="flex items-center justify-between">
                         <h2 className="dark:text-white">Your Resume</h2>

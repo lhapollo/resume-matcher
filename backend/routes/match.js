@@ -47,14 +47,9 @@ router.post(
 
             const result = await analyzeMatch(resumeText, jobDescription);
             result.analyzedAt = new Date().toISOString();
+            result.resumeText = resumeText; 
+            result.jobDescription = jobDescription;
             res.json(result);
-            // res.json({
-            //     status: 'extraction_ok',
-            //     resumeLength: resumeText.length,
-            //     jobLength: jobDescription.length,
-            //     resumePreview: resumeText.slice(0, 200),
-            //     jobPreview: jobDescription.slice(0, 200)
-            // });
         } catch (err) {
             console.error('Error processing files: ', err.message);
             res.status(500).json({ error: err.message });

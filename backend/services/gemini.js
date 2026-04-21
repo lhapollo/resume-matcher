@@ -50,7 +50,7 @@ async function analyzeMatch(resumeText, jobDescription) {
     const res = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: buildPrompt(resumeText, jobDescription),
-        config: {temperature: 0.2, maxOutputTokens: 2048 }
+        config: {temperature: 0.2, maxOutputTokens: 4096 }
     });
 
     const rawText = res.text;
@@ -64,4 +64,30 @@ async function analyzeMatch(resumeText, jobDescription) {
     }
 }
 
-module.exports = { analyzeMatch };
+function buildCoverLetterPrompt(resumeText, jobDescription) {
+    return `You are a professional cover letter writer. Using only the resume and job description provided, write a tailored, concise cover letter in first person. Do not invent experience or skills not present in the resume. Do not include a date, address block, or subject line — just the body paragraphs.
+
+    <resume>
+    ${resumeText}
+    </resume>
+
+    <job_description>
+    ${jobDescription}
+    </job_description>
+
+    Write 3–4 short paragraphs or roughly 300-400 words in plain markdown. Do not add any explanation or preamble outside the letter itself.`;
+}
+
+async function generateCoverLetter(resumeText, jobDescription) {
+    const res = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: buildCoverLetterPrompt(resumeText, jobDescription),
+        config: { temperature: 0.4, maxOutputTokens: 2048}
+    });
+
+    const text = res.text; 
+    if (!text) throw new Error("No response from Gemini");
+    return text.trim();
+}
+
+module.exports = { analyzeMatch, generateCoverLetter};

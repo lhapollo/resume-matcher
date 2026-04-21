@@ -1,5 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { marked } from 'marked';
+import { generateCoverLetter } from '../lib/api';
 
 function ScoreRing({ score }) {
   const radius = 96;
@@ -100,10 +102,29 @@ export default function ResultsPage() {
   const navigate = useNavigate();
   const result = state?.result;
 
+  const [coverLetter, setCoverLetter] = useState(null);
+  const [clLoading, setClLoading] = useState(false);
+  const [clError, setClError] = useState(null);
+
+  async function handleGenerateCoverLetter() {
+    setClLoading(true);
+    setClError(null);
+    try {
+        const text = await generateCoverLetter(resumeText, jobDescription);
+        setCoverLetter(text);
+    } catch (err) {
+        setClError(err.message);
+    } finally {
+        setClLoading(false);
+    }
+  }
+
   if (!result) {
     navigate('/');
     return null;
   }
+
+  const { resumeText, jobDescription } = state || {};
 
   const { overallScore, summary, categories, strengths, gaps, recommendations, analyzedAt } = result;
 
@@ -252,6 +273,28 @@ export default function ResultsPage() {
               </ol>
             </Card>
           )}
+
+          <Card wide>
+            <SectionTitle icon="✉" title="Cover Letter" />
+            {coverLetter ? (
+                <>
+                    <div
+                        id="cover-letter-print"
+                        className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed prose dark:prose-invert max-w-none"
+                        dangerouslySetInnerHTML={{ __html: marked.parse(coverLetter) }}
+                    />
+                </>
+            ) : (
+                <button
+                    onClick={handleGenerateCoverLetter}
+                    disabled={clLoading}
+                    className="self-start text-sm text-neutral-500 dark:text-neutral-400 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 disabled:opacity-50"
+                >
+                    {clLoading ? 'Generating…' : 'Generate Cover Letter'}
+                </button>
+            )}
+            {clError && <p className="text-sm text-red-500">{clError}</p>}
+        </Card>
 
         </div>
       </div>

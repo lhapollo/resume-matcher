@@ -14,3 +14,15 @@ export async function analyzeMatch(resumeFile, jobText) {
     if (!res.ok) throw new Error(data.error || 'Failed to analyze match');
     return data;
 }
+
+export async function generateCoverLetter(resumeText, jobDescription) {
+    const res = await fetch(`${BASE_URL}/api/cover-letter`, {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resumeText, jobDescription }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to generate cover letter');
+    return data.coverLetter;
+}
