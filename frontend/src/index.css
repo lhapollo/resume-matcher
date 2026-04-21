@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-google-sans: 'Google Sans', sans-serif;
 }
+
+:root { --ring-track: #e5e5e5; }
+.dark { --ring-track: #404040; }
