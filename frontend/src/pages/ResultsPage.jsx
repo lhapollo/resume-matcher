@@ -285,7 +285,7 @@ export default function ResultsPage() {
   // "View All" mode: normal scrollable layout showing every card
   if (showAll) {
     return (
-      <div className={`min-h-screen bg-white dark:bg-neutral-950 font-google-sans px-6 py-12 transition-all duration-[400ms] ${fading || !pageVisible ? 'opacity-0' : 'opacity-100'}`}>
+      <div className={`min-h-screen bg-white dark:bg-neutral-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:16px_16px] font-google-sans px-6 py-12 transition-all duration-[400ms] ${fading || !pageVisible ? 'opacity-0' : 'opacity-100'}`}>
         <div className="max-w-4xl mx-auto">
           <header className="flex items-center justify-between pr-14 mb-10">
             <button onClick={() => navigate('/')} className="flex items-center gap-2 cursor-pointer">

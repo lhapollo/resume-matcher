@@ -2,12 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { analyzeMatch } from '../lib/api';
 
-function scrollProgress(ref, entrySpan = 250) {
-  if (!ref.current) return 0;
-  const rect = ref.current.getBoundingClientRect();
-  return Math.min(1, Math.max(0, (window.innerHeight - rect.top) / entrySpan));
-}
-
 export default function UploadPage() {
   const [resume, setResume] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -15,34 +9,11 @@ export default function UploadPage() {
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fadingOut, setFadingOut] = useState(false);
   const fileInputRef = useRef();
   const navigate = useNavigate();
 
-  const [scrollY, setScrollY] = useState(0);
-  const [fadingOut, setFadingOut] = useState(false);
-  const [card1P, setCard1P] = useState(0);
-  const [card2P, setCard2P] = useState(0);
-  const [btnP, setBtnP] = useState(0);
-  const card1Ref = useRef();
-  const card2Ref = useRef();
-  const btnRef = useRef();
-
-  useEffect(() => {
-    const onScroll = () => {
-      setScrollY(window.scrollY);
-      setCard1P(scrollProgress(card1Ref));
-      setCard2P(scrollProgress(card2Ref));
-      setBtnP(scrollProgress(btnRef));
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
   useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
-
-  // 144px → 52px over ~460px of scroll
-  const titlePx = Math.max(52, 144 - scrollY * 0.2);
-  const subtitleOpacity = Math.max(0, 1 - scrollY / 120);
 
   function handleFile(file) {
     if (!file) return;
@@ -78,7 +49,7 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950 font-google-sans transition-colors duration-200" style={{ opacity: fadingOut ? 0 : 1, transition: fadingOut ? 'opacity 400ms ease-in' : undefined }}>
+    <div className="min-h-screen bg-white dark:bg-neutral-950 font-google-sans transition-colors duration-200 absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:16px_16px]" style={{ opacity: fadingOut ? 0 : 1, transition: fadingOut ? 'opacity 400ms ease-in' : undefined }}>
 
       {/* Header */}
       <header className="flex items-center px-6 pr-20 py-4 border-b border-neutral-100 dark:border-neutral-800">
@@ -88,39 +59,21 @@ export default function UploadPage() {
         </div>
       </header>
 
-      {/* Hero — full viewport height so cards are always below the fold on load */}
-      <div style={{ height: '100vh' }}>
-        {/* Spacer pushes sticky trigger point down so title starts ~centered on screen */}
-        <div style={{ height: '28vh' }} />
-        {/* Once scrolled past the spacer, sticks at top-0 and stays on screen */}
-        <div className="sticky top-0 flex flex-col items-center text-center px-6 py-8 bg-white dark:bg-neutral-950 z-10">
-          <h1
-            className="font-semibold tracking-tight dark:text-white leading-none"
-            style={{ fontSize: titlePx }}
-          >
-            FitCheck
-          </h1>
-          <p
-            className="text-neutral-500 dark:text-neutral-400 mt-6 text-xl"
-            style={{ opacity: subtitleOpacity }}
-          >
-            How fit is your resume for a job? Find out below.
-          </p>
-        </div>
+      {/* Title */}
+      <div className="flex flex-col items-center text-center px-6 pt-6 pb-5">
+        <h1 className="text-6xl lg:text-7xl font-semibold tracking-tight dark:text-white leading-none">
+          FitCheck
+        </h1>
+        <p className="text-neutral-500 dark:text-neutral-400 mt-4 text-xl">
+          How fit is your resume for a job? Find out below.
+        </p>
       </div>
 
       {/* Cards */}
-      <div className="max-w-5xl mx-auto px-6 pb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="max-w-5xl xl:max-w-6xl mx-auto px-6 pb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {/* Resume card */}
-        <div
-          ref={card1Ref}
-          className="bg-white dark:bg-neutral-900 border-2 border-neutral-800 dark:border-neutral-700 rounded-xl p-8 flex flex-col gap-4"
-          style={{
-            opacity: card1P,
-            transform: `translateY(${(1 - card1P) * 60}px)`,
-          }}
-        >
+        <div className="bg-white dark:bg-neutral-900 border-2 border-neutral-800 dark:border-neutral-700 rounded-xl p-4 sm:p-6 lg:p-8 flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-yellow-600 dark:text-yellow-400 text-sm">◧</span>
@@ -150,7 +103,7 @@ export default function UploadPage() {
             onDragLeave={() => setDragOver(false)}
             onDrop={handleDrop}
             className={`border-2 border-dashed rounded-lg overflow-hidden transition-all duration-200
-              ${!resume ? 'min-h-[460px] flex items-center justify-center cursor-pointer' : ''}
+              ${!resume ? 'min-h-[240px] sm:min-h-[280px] lg:min-h-[300px] xl:min-h-[320px] 2xl:min-h-[420px] flex items-center justify-center cursor-pointer' : ''}
               ${dragOver
                 ? 'border-yellow-400 bg-yellow-400/5'
                 : resume
@@ -161,9 +114,9 @@ export default function UploadPage() {
           >
             {resume ? (
               previewUrl ? (
-                <iframe src={previewUrl} className="w-full h-[460px] block" title="Resume preview" />
+                <iframe src={previewUrl} className="w-full h-[240px] sm:h-[280px] lg:h-[300px] xl:h-[320px] 2xl:h-[420px] block" title="Resume preview" />
               ) : (
-                <div className="min-h-[460px] flex flex-col items-center justify-center gap-3 text-center p-8">
+                <div className="min-h-[240px] sm:min-h-[280px] lg:min-h-[300px] xl:min-h-[320px] 2xl:min-h-[420px] flex flex-col items-center justify-center gap-3 text-center p-8">
                   <span className="text-5xl text-neutral-400">📄</span>
                   <div className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{resume.name}</div>
                   <div className="text-xs text-neutral-500 dark:text-neutral-400">{(resume.size / 1024).toFixed(1)} KB</div>
@@ -181,14 +134,7 @@ export default function UploadPage() {
         </div>
 
         {/* Job description card */}
-        <div
-          ref={card2Ref}
-          className="bg-white dark:bg-neutral-900 border-2 border-neutral-800 dark:border-neutral-700 rounded-xl p-8 flex flex-col gap-4"
-          style={{
-            opacity: card2P,
-            transform: `translateY(${(1 - card2P) * 60}px)`,
-          }}
-        >
+        <div className="bg-white dark:bg-neutral-900 border-2 border-neutral-800 dark:border-neutral-700 rounded-xl p-4 sm:p-6 lg:p-8 flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <span className="text-yellow-600 dark:text-yellow-400 text-sm">◨</span>
             <span className="text-[14px] font-medium uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Job Description</span>
@@ -199,7 +145,7 @@ export default function UploadPage() {
             onChange={(e) => setJobText(e.target.value)}
             placeholder="Paste the job posting here. Markdown is supported."
             spellCheck={false}
-            className="flex-1 min-h-[460px] border border-neutral-800 dark:border-neutral-700 rounded-lg p-4 text-sm placeholder-neutral-500 dark:placeholder-neutral-600 font-google-sans leading-relaxed resize-none outline-none bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-200 focus:border-neutral-600 dark:focus:border-neutral-500 transition-colors duration-200"
+            className="flex-1 min-h-[240px] sm:min-h-[280px] lg:min-h-[300px] xl:min-h-[320px] 2xl:min-h-[420px] border border-neutral-800 dark:border-neutral-700 rounded-lg p-4 text-sm placeholder-neutral-500 dark:placeholder-neutral-600 font-google-sans leading-relaxed resize-none outline-none bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-200 focus:border-neutral-600 dark:focus:border-neutral-500 transition-colors duration-200"
           />
 
           <div className="text-right font-mono text-[11px] text-neutral-500 dark:text-neutral-500">
@@ -218,14 +164,7 @@ export default function UploadPage() {
       )}
 
       {/* Submit */}
-      <div
-        ref={btnRef}
-        className="flex justify-center pb-16"
-        style={{
-          opacity: btnP,
-          transform: `translateY(${(1 - btnP) * 60}px)`,
-        }}
-      >
+      <div className="flex justify-center pb-16">
         <button
           onClick={handleSubmit}
           disabled={loading}
