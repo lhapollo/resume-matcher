@@ -10,8 +10,14 @@ export default function UploadPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
+  const [pageVisible, setPageVisible] = useState(false);
   const fileInputRef = useRef();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => requestAnimationFrame(() => setPageVisible(true)));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
 
@@ -49,14 +55,20 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950 font-google-sans transition-colors duration-200 absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:16px_16px]" style={{ opacity: fadingOut ? 0 : 1, transition: fadingOut ? 'opacity 400ms ease-in' : undefined }}>
+    <div className="min-h-screen bg-white dark:bg-neutral-950 font-google-sans transition-colors duration-200 absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:16px_16px]" style={{ opacity: fadingOut ? 0 : pageVisible ? 1 : 0, transition: 'opacity 400ms ease-in' }}>
 
       {/* Header */}
-      <header className="flex items-center px-6 pr-20 py-4 border-b border-neutral-100 dark:border-neutral-800">
+      <header className="flex items-center justify-between px-6 pr-20 py-4">
         <div className="flex items-center gap-2">
           <span className="text-yellow-600 dark:text-yellow-400 text-3xl">◈</span>
           <span className="text-3xl font-semibold tracking-tight dark:text-white">FitCheck</span>
         </div>
+        <button
+          onClick={() => navigate('/history')}
+          className="text-sm text-neutral-500 dark:text-neutral-400 bg-white dark:bg-neutral-900 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
+        >
+          History
+        </button>
       </header>
 
       {/* Title */}

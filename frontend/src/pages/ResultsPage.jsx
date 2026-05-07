@@ -295,13 +295,19 @@ export default function ResultsPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => switchMode(false)}
-                className="text-sm text-neutral-500 dark:text-neutral-400 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
+                className="text-sm text-neutral-500 dark:text-neutral-400 bg-white dark:bg-neutral-900 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
               >
                 ← Slideshow
               </button>
               <button
+                onClick={() => navigate('/history')}
+                className="text-sm text-neutral-500 dark:text-neutral-400 bg-white dark:bg-neutral-900 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
+              >
+                History
+              </button>
+              <button
                 onClick={() => navigate('/')}
-                className="text-sm text-neutral-500 dark:text-neutral-400 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
+                className="text-sm text-neutral-500 dark:text-neutral-400 bg-white dark:bg-neutral-900 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
               >
                 New Analysis
               </button>
@@ -318,10 +324,10 @@ export default function ResultsPage() {
   const isLast = currentIndex === slides.length - 1;
 
   return (
-    <div className={`h-screen flex flex-col bg-white dark:bg-neutral-950 font-google-sans transition-all duration-[400ms] overflow-hidden ${fading || !pageVisible ? 'opacity-0' : 'opacity-100'}`}>
+    <div className={`h-screen flex flex-col bg-white dark:bg-neutral-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:16px_16px] font-google-sans transition-all duration-[400ms] overflow-hidden ${fading || !pageVisible ? 'opacity-0' : 'opacity-100'}`}>
 
       {/* Header — right-padded so "New Analysis" doesn't hide under the fixed dark-mode toggle */}
-      <header className="flex-shrink-0 flex items-center justify-between px-6 pr-20 py-4 border-b border-neutral-100 dark:border-neutral-800">
+      <header className="flex-shrink-0 flex items-center justify-between px-6 pr-20 py-4">
         <button onClick={() => navigate('/')} className="flex items-center gap-2 cursor-pointer">
           <span className="text-yellow-600 dark:text-yellow-400 text-3xl">◈</span>
           <span className="text-3xl font-semibold tracking-tight dark:text-white">FitCheck</span>
@@ -329,13 +335,19 @@ export default function ResultsPage() {
         <div className="flex gap-3">
           <button
             onClick={() => switchMode(true)}
-            className="text-sm text-neutral-500 dark:text-neutral-400 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
+            className="text-sm text-neutral-500 dark:text-neutral-400 bg-white dark:bg-neutral-900 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
           >
             View All
           </button>
           <button
+            onClick={() => navigate('/history')}
+            className="text-sm text-neutral-500 dark:text-neutral-400 bg-white dark:bg-neutral-900 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
+          >
+            History
+          </button>
+          <button
             onClick={() => navigate('/')}
-            className="text-sm text-neutral-500 dark:text-neutral-400 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
+            className="text-sm text-neutral-500 dark:text-neutral-400 bg-white dark:bg-neutral-900 border border-neutral-800 dark:border-neutral-700 px-4 py-2 rounded-lg hover:border-neutral-600 hover:text-black dark:hover:text-white transition-all duration-200 cursor-pointer"
           >
             ← New Analysis
           </button>

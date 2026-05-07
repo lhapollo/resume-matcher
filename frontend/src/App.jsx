@@ -2,6 +2,16 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import UploadPage from './pages/UploadPage';
 import ResultsPage from './pages/ResultsPage';
 import { useDarkMode } from './hooks/useDarkMode';
+import HistoryPage from './pages/HistoryPage';
+
+function getOrCreateSessionId() {
+  let sessionId = localStorage.getItem('sessionId');
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem('sessionId', sessionId);
+  }
+  return sessionId;
+}
 
 export default function App() {
   const [dark, toggleDark] = useDarkMode();
@@ -17,7 +27,10 @@ export default function App() {
       <Routes>
         <Route path="/" element={<UploadPage />} />
         <Route path="/results" element={<ResultsPage />} />
+        <Route path="/history" element={<HistoryPage />} />
       </Routes>
     </BrowserRouter>
   );
 }
+
+export const sessionId = getOrCreateSessionId();

@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
 const { extractText } = require('../services/extractor');
+const pool = require('../db');
 
 const router = express.Router();
 
@@ -49,6 +50,14 @@ router.post(
             result.analyzedAt = new Date().toISOString();
             result.resumeText = resumeText; 
             result.jobDescription = jobDescription;
+
+            const sessionId = req.headers['x-session-id'];
+            if (sessionId) {
+                await pool.query(
+                    'INSERT INTO results (session_id, score, result_json) VALUES ($1, $2, $3)',
+                    [sessionId, result.overallScore, result]
+                );
+            }
             res.json(result);
         } catch (err) {
             console.error('Error processing files: ', err.message);
